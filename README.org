@@ -1,0 +1,54 @@
+#+title: org-bulletproof
+#+author: pondersson
+
+* Introduction
+
+A minor mode that simplifies Org's plain list bullet cycle (~-~ -> ~+~ -> ~*~ -> ~1.~
+-> ~1)~) into a toggle. Basically, instead of choosing between any of the 5 original
+bullets for every sublist, you just choose if you want it ~unordered~ or ~ordered~, and all
+indented list bullets of the same type will be cycled automatically.
+
+**  Example
+
+Consider the following plain list:
+
+#+begin_src org
+- foo
+- bar
+#+end_src
+
+With ~org-bulletproof-mode~ enabled, calling ~org-indent-item~ on the second item will
+automatically cycle its ~unordered~ bullet in relation to its new parent:
+
+#+begin_src org
+- foo
+  + bar
+#+end_src
+
+This particular behavior can be achieved using ~org-list-demote-modify-bullet~, but
+~org-bulletproof~ goes further by always forcing all child bullets that share their
+parent's type to be cycled. So, calling ~org-cycle-list-bullet~ on the first item, making
+it ~ordered~, forces the second item's bullet to the default ~unordered~ bullet (~-~):
+
+#+begin_src org
+1) foo
+   - bar
+#+end_src
+
+Then, calling ~org-cycle-list-bullet~ on the second item, making it ~ordered~, causes its
+bullet to be automatically cycled in relation to its parent:
+
+#+begin_src org
+1) foo
+   1. bar
+#+end_src
+
+And you'll never again have to remember which bullet is where in the cycle! :)
+
+* Setup
+
+Install and load the package using your preferred method and run:
+
+#+begin_src emacs-lisp
+(global-org-bulletproof-mode +1)
+#+end_src
