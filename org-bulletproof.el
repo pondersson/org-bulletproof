@@ -34,6 +34,7 @@
   "Automatic plain list bullet cycling."
   :group 'org-bulletproof)
 
+;;;###autoload
 (define-globalized-minor-mode global-org-bulletproof-mode
   org-bulletproof-mode org-bulletproof--on
   :group 'org-bulletproof)
