@@ -52,3 +52,7 @@ Install and load the package using your preferred method and run:
 #+begin_src emacs-lisp
 (global-org-bulletproof-mode +1)
 #+end_src
+
+* Caveats
+
+Does not support ~org-list-allow-alphabetical~ or setting ~org-plain-list-ordered-item-terminator~ to anything other than ~t~.

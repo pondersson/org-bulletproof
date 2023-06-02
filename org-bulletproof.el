@@ -21,8 +21,7 @@
 ;; functions to enable automatic bullet cycling in indented plain lists.  The user only
 ;; has to choose between unordered and ordered bullets.
 ;;
-;; Note: Does not support `org-list-allow-alphabetical' or setting
-;; `org-plain-list-ordered-item-terminator' to anything other than `t'.
+;; See README.org in the package repository for more details.
 
 ;;; Code:
 
