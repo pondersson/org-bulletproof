@@ -39,11 +39,12 @@
   :group 'org-bulletproof)
 
 (defconst org-bulletproof--cycle-alist
-  '(("1) " . "1. ")
-    ("1. " . "1) ")
-    ("- " . "+ ")
+  '(("- " . "+ ")
     ("+ " . "* ")
-    ("* " . "- ")))
+    ("* " . "- ")
+    ("1) " . "1. ")
+    ("1. " . "1) "))
+  "Alist of unordered and ordered bullet cycles.")
 
 (define-minor-mode org-bulletproof-mode
   "Automatic plain list bullet cycling."
