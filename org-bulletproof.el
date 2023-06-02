@@ -30,7 +30,7 @@
 
 (defcustom org-bulletproof-default-unordered-bullet "-"
   "The default bullet used in unordered sublists."
-  :type '(choice (const "-") (const "+"))  ;; Don't use "*", it conflicts with headings
+  :type '(choice (const "-") (const "+"))  ;; Avoid "*" as it conflicts with headings
   :group 'org-bulletproof)
 
 (defcustom org-bulletproof-default-ordered-bullet "1)"
@@ -68,14 +68,15 @@ Pass through the original WHICH argument when `org-bulletproof-mode' is nil."
       (let* ((struct (org-list-struct))
              (item (org-list-get-item-begin))
              (bullet (org-list-get-bullet item struct))
-             (filtered-which (if (string-match-p "[0-9]+" bullet)
-                                 org-bulletproof-default-unordered-bullet
-                               org-bulletproof-default-ordered-bullet)))
+             (bullet-type (org-bulletproof--get-type bullet))
+             (cycled-which (if (equal bullet-type 'unordered)
+                               org-bulletproof-default-ordered-bullet
+                             org-bulletproof-default-unordered-bullet)))
         ;; Return a list because the `apply' call in the advice expects it
-        (list filtered-which))
+        (list cycled-which))
     which))
 
-(defun org-bulletproof--force-bul (struct prevs)
+(defun org-bulletproof--force-bullets (struct prevs)
   "Force all bullets in STRUCT according to set rules.
 
 PREVS is the alist of previous items, as returned by
@@ -83,41 +84,45 @@ PREVS is the alist of previous items, as returned by
 
 This function modifies STRUCT."
   (when org-bulletproof-mode
-    ;; Set all bullets in the current sublist equal to the first bullet. This is done
-    ;; because the following operation of forcing all bullets requires the parent sublist
-    ;; to be fully updated, and because this runs before org-list-struct-fix-bul, all Org
-    ;; mode has done so far is set the first bullet of the sublist.
-    (save-excursion
-      (beginning-of-line)
-      (let* ((sublist-items (org-list-get-all-items (point) struct prevs))
-             (first-item (car sublist-items))
-             (first-bullet (org-list-get-bullet first-item struct)))
-        (dolist (item sublist-items)
-          (org-list-set-bullet item struct first-bullet))))
+    ;; Forcing all bullets requires the changed sublist to be fully updated. Because this
+    ;; runs before org-list-struct-fix-bul, all Org mode has done so far is set the first
+    ;; bullet of the changed sublist, so propagate that bullet.
+    (org-bulletproof--propagate-first-sublist-bullet struct prevs)
     ;; Set each item's bullet according to its relationship with its parent
-    (let* ((parents (org-list-parents-alist struct))
-           (force-bul
-            (function
-             (lambda (item)
-               (let* ((bullet (org-list-get-bullet item struct))
-                      (bullet-type (if (string-match-p "[0-9]+" bullet) 'ordered 'unordered))
-                      (parent (org-list-get-parent item struct parents))
-                      (parent-bullet (org-list-get-bullet parent struct))
-                      (parent-bullet-type (when parent-bullet
-                                            (if (string-match-p "[0-9]+" parent-bullet)
-                                                'ordered
-                                              'unordered)))
-                      (new-bullet
-                       (if (equal bullet-type parent-bullet-type)
-                           (cdr (assoc-string parent-bullet org-bulletproof--cycle-alist))
-                         (if (equal bullet-type 'ordered)
-                             org-bulletproof-default-ordered-bullet
-                           org-bulletproof-default-unordered-bullet))))
-                 (org-list-set-bullet item struct (org-list-bullet-string new-bullet)))))))
-      (mapc force-bul (mapcar #'car struct)))))
+    (let ((parents (org-list-parents-alist struct)))
+      (dolist (item (mapcar #'car struct))
+        (org-bulletproof--force-bullet item struct parents)))))
+
+(defun org-bulletproof--propagate-first-sublist-bullet (struct prevs)
+  "Set all bullets in the current sublist equal to the first bullet."
+  (save-excursion
+    (beginning-of-line)
+    (let* ((sublist-items (org-list-get-all-items (point) struct prevs))
+           (first-item (car sublist-items))
+           (first-bullet (org-list-get-bullet first-item struct)))
+      (dolist (item sublist-items)
+        (org-list-set-bullet item struct first-bullet)))))
+
+(defun org-bulletproof--force-bullet (item struct parents)
+  (let* ((bullet (org-list-get-bullet item struct))
+         (bullet-type (org-bulletproof--get-type bullet))
+         (parent (org-list-get-parent item struct parents))
+         (parent-bullet (org-list-get-bullet parent struct))
+         (parent-bullet-type (when parent-bullet (org-bulletproof--get-type parent-bullet)))
+         (forced-bullet
+          (if (equal bullet-type parent-bullet-type)
+              (cdr (assoc-string parent-bullet org-bulletproof--cycle-alist))
+            (if (equal bullet-type 'unordered)
+                org-bulletproof-default-unordered-bullet
+              org-bulletproof-default-ordered-bullet))))
+    (org-list-set-bullet item struct (org-list-bullet-string forced-bullet))))
+
+(defun org-bulletproof--get-type (bullet)
+  "Get the type of BULLET string, either `unordered' or `ordered'."
+  (if (string-match-p "[0-9]+" bullet) 'ordered 'unordered))
 
 (advice-add #'org-cycle-list-bullet :filter-args #'org-bulletproof--filter)
-(advice-add #'org-list-struct-fix-bul :before #'org-bulletproof--force-bul)
+(advice-add #'org-list-struct-fix-bul :before #'org-bulletproof--force-bullets)
 
 (provide 'org-bulletproof)
 
