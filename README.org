@@ -1,6 +1,8 @@
 #+title: org-bulletproof
 #+author: pondersson
 
+#+html: <a href="https://github.com/pondersson/org-bulletproof/actions"><img alt="Build status" src="https://github.com/pondersson/org-bulletproof/workflows/check/badge.svg?raw=true"/></a>
+
 * Introduction
 
 A minor mode that simplifies Org's plain list bullet cycle (~-~ -> ~+~ -> ~*~ -> ~1.~
