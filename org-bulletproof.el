@@ -4,7 +4,7 @@
 ;; Maintainer: Pontus Andersson <pondersson@gmail.com>
 ;; Homepage: https://github.com/pondersson/org-bulletproof
 ;; Version: 0.1
-;; Package-Requires: ((emacs "25.1"))
+;; Package-Requires: ((emacs "27.1"))
 ;; Keywords: outlines, convenience
 
 ;; This file is part of GNU Emacs.
@@ -34,6 +34,13 @@
 
 (require 'org)
 
+(defgroup org-bulletproof nil
+  "Automatic plain list bullet cycling."
+  :link '(url-link :tag "Homepage" "https://github.com/pondersson/org-bulletproof")
+  :link '(emacs-library-link :tag "Library Source" "org-bulletproof.el")
+  :group 'org
+  :prefix "org-bulletproof-")
+
 (defcustom org-bulletproof-default-unordered-bullet "-"
   "The default bullet used in unordered sublists."
   :type '(choice (const "-") (const "+"))  ;; Avoid "*" as it conflicts with headings
@@ -52,6 +59,7 @@
     ("1. " . "1) "))
   "Alist of unordered and ordered bullet cycles.")
 
+;;;###autoload
 (define-minor-mode org-bulletproof-mode
   "Automatic plain list bullet cycling."
   :group 'org-bulletproof)
@@ -89,8 +97,8 @@ PREVS is the alist of previous items, as returned by
 `org-list-prevs-alist'.  This function modifies STRUCT."
   (when org-bulletproof-mode
     ;; Forcing all bullets requires the changed sublist to be fully updated. Because this
-    ;; runs before org-list-struct-fix-bul, all Org mode has done so far is set the first
-    ;; bullet of the changed sublist, so propagate that bullet.
+    ;; runs before `org-list-struct-fix-bul', all Org mode has done so far is set the
+    ;; first bullet of the changed sublist, so propagate that bullet.
     (org-bulletproof--propagate-first-sublist-bullet struct prevs)
     ;; Set each item's bullet according to its relationship with its parent
     (let ((parents (org-list-parents-alist struct)))
@@ -111,7 +119,10 @@ PREVS is the alist of previous items, as returned by
         (org-list-set-bullet item struct first-bullet)))))
 
 (defun org-bulletproof--force-bullet (item struct parents)
-  "Force ITEM's bullet based on its PARENTS, modifying STRUCT."
+  "Force ITEM's bullet based on its parent.
+
+PARENTS is the alist of parent items, as returned by
+`org-list-parents-alist'.  This function modifies STRUCT."
   (let* ((bullet (org-list-get-bullet item struct))
          (bullet-type (org-bulletproof--get-type bullet))
          (parent (org-list-get-parent item struct parents))
@@ -126,7 +137,7 @@ PREVS is the alist of previous items, as returned by
     (org-list-set-bullet item struct (org-list-bullet-string forced-bullet))))
 
 (defun org-bulletproof--get-type (bullet)
-  "Return the type of BULLET, either `unordered' or `ordered'."
+  "Return the type of the BULLET string, either `unordered' or `ordered'."
   (if (string-match-p "[0-9]+" bullet) 'ordered 'unordered))
 
 (advice-add #'org-cycle-list-bullet :filter-args #'org-bulletproof--filter)
