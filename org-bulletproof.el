@@ -34,7 +34,7 @@
 
 (require 'org)
 
-(defgroup org-modern nil
+(defgroup org-bulletproof nil
   "Automatic plain list bullet cycling."
   :link '(url-link :tag "Homepage" "https://github.com/pondersson/org-bulletproof")
   :link '(emacs-library-link :tag "Library Source" "org-bulletproof.el")
