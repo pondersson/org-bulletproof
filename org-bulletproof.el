@@ -7,8 +7,6 @@
 ;; Package-Requires: ((emacs "27.1"))
 ;; Keywords: outlines, convenience
 
-;; This file is part of GNU Emacs.
-
 ;; This program is free software: you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
 ;; the Free Software Foundation, either version 3 of the License, or
@@ -62,7 +60,10 @@
 ;;;###autoload
 (define-minor-mode org-bulletproof-mode
   "Automatic plain list bullet cycling."
-  :group 'org-bulletproof)
+  :group 'org-bulletproof
+  (when org-bulletproof-mode
+    (advice-add #'org-cycle-list-bullet :filter-args #'org-bulletproof--filter)
+    (advice-add #'org-list-struct-fix-bul :before #'org-bulletproof--force-bullets)))
 
 ;;;###autoload
 (define-globalized-minor-mode global-org-bulletproof-mode
@@ -139,9 +140,6 @@ PARENTS is the alist of parent items, as returned by
 (defun org-bulletproof--get-type (bullet)
   "Return the type of the BULLET string, either `unordered' or `ordered'."
   (if (string-match-p "[0-9]+" bullet) 'ordered 'unordered))
-
-(advice-add #'org-cycle-list-bullet :filter-args #'org-bulletproof--filter)
-(advice-add #'org-list-struct-fix-bul :before #'org-bulletproof--force-bullets)
 
 (provide 'org-bulletproof)
 
