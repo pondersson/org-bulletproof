@@ -2,6 +2,8 @@
 #+author: pondersson
 
 #+html: <a href="https://github.com/pondersson/org-bulletproof/actions"><img alt="Build status" src="https://github.com/pondersson/org-bulletproof/workflows/check/badge.svg?raw=true"/></a>
+#+html: <a href="https://melpa.org/#/org-bulletproof"><img alt="MELPA" src="https://melpa.org/packages/org-bulletproof-badge.svg"/></a>
+#+html: <a href="https://stable.melpa.org/#/org-bulletproof"><img alt="MELPA Stable" src="https://stable.melpa.org/packages/org-bulletproof-badge.svg"/></a>
 
 * Introduction
 
