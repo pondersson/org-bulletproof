@@ -1,10 +1,9 @@
-;;; test-org-bulletproof.el --- Tests for org-bulletproof.el  -*- lexical-binding: t; -*-
+;;; org-bulletproof-test.el --- Tests for org-bulletproof.el  -*- lexical-binding: t; -*-
 
 ;;; Code:
 
-(require 'org-bulletproof)
-(require 'org)
 (require 'ert)
+(require 'org-bulletproof)
 
 ;; Taken from https://git.savannah.gnu.org/cgit/emacs/org-mode.git/tree/testing/org-test.el
 (defmacro org-bulletproof-test-with-temp-text (text &rest body)
@@ -69,8 +68,7 @@ otherwise place the point at the beginning of the inserted text."
    2. item D
       1) item F"
     (org-shiftright)
-    (next-line 4)
-    (beginning-of-line)
+    (forward-line 4)
     (should (looking-at "     1\\. item F"))))
 
 (ert-deftest test-org-bulletproof/readme-example ()
@@ -80,11 +78,11 @@ otherwise place the point at the beginning of the inserted text."
     (org-metaright)
     (beginning-of-line)
     (should (looking-at "  \\+ bar"))
-    (previous-line)
+    (forward-line -1)
     (org-shiftright)
     (beginning-of-line)
     (should (looking-at "1) foo\n   - bar"))
-    (next-line)
+    (forward-line)
     (org-shiftright)
     (beginning-of-line)
     (should (looking-at "   1\\. bar"))))
