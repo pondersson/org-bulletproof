@@ -7,10 +7,10 @@
 
 * Introduction
 
-A minor mode that simplifies Org's plain list bullet cycle (~-~ -> ~+~ -> ~*~ -> ~1.~
--> ~1)~) into a toggle. Basically, instead of choosing between any of the 5 original
-bullets for every sublist, you just choose if you want it ~unordered~ or ~ordered~, and all
-indented list bullets of the same type will be cycled automatically.
+A minor mode that simplifies Org's plain list bullet cycle (~-~ -> ~+~ -> ~*~ -> ~1.~ -> ~1)~ -> ~-~)
+into a toggle. Basically, instead of choosing between all bullets for every sublist, you
+just choose if you want it ~unordered~ or ~ordered~, and all indented list bullets of the
+same type will be cycled automatically.
 
 **  Example
 
@@ -35,7 +35,7 @@ parent's type to be cycled. So, calling ~org-cycle-list-bullet~ on the first ite
 it ~ordered~, forces the second item's bullet to the default ~unordered~ bullet (~-~):
 
 #+begin_src org
-1) foo
+1. foo
    - bar
 #+end_src
 
@@ -43,8 +43,8 @@ Then, calling ~org-cycle-list-bullet~ on the second item, making it ~ordered~, c
 bullet to be automatically cycled in relation to its parent:
 
 #+begin_src org
-1) foo
-   1. bar
+1. foo
+   1) bar
 #+end_src
 
 And you'll never again have to remember which bullet is where in the cycle! :)
@@ -57,6 +57,9 @@ Install and load the package using your preferred method and run:
 (global-org-bulletproof-mode +1)
 #+end_src
 
-* Caveats
+* Customization
 
-Does not support ~org-list-allow-alphabetical~ or setting ~org-plain-list-ordered-item-terminator~ to anything other than ~t~.
+The cycles can be set using the customizable variables ~org-bulletproof-unordered-cycle~
+and ~org-bulletproof-ordered-cycle~. They're flexible and should work with any combination
+of ~org-list-allow-alphabetical~ and ~org-plain-list-ordered-item-terminator~. That said, if
+you encounter any unexpected or unintuitive behavior, please open a Github issue.
