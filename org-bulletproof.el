@@ -3,7 +3,7 @@
 ;; Author: Pontus Andersson <pondersson@gmail.com>
 ;; Maintainer: Pontus Andersson <pondersson@gmail.com>
 ;; Homepage: https://github.com/pondersson/org-bulletproof
-;; Version: 0.2
+;; Version: 0.3
 ;; Package-Requires: ((emacs "27.1"))
 ;; Keywords: outlines, convenience
 
