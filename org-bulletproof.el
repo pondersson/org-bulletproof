@@ -67,7 +67,9 @@ In any given context, the first available bullet becomes the default."
   '("1." "1)")
   "List containing the ordered bullet cycle.
 
-In any given context, the first available bullet becomes the default."
+In any given context, the first available bullet becomes the default.
+
+To use alphabetical bullets `org-list-allow-alphabetical' must be t."
   :group 'org-bulletproof
   :type '(repeat (choice (const "1.") (const "1)")
                          (const "a.") (const "A.")
